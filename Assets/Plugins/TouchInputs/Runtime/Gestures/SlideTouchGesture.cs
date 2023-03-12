@@ -181,21 +181,5 @@ namespace VirtualIT.TouchInputs
             public Vector2 FrameDeltaPosition;
             public Vector2 GlobalDeltaPosition;
         }
-
-#if UNITY_EDITOR
-        [MenuItem("Virtual-IT/TouchInputs/Create Slide gesture...", priority = 1)]
-        internal static void CreateScriptableObject()
-        {
-            var _tryGetActiveFolderPath = typeof(ProjectWindowUtil).GetMethod("TryGetActiveFolderPath", BindingFlags.Static | BindingFlags.NonPublic);
-            object[] args = new object[] { null };
-            bool found = (bool)_tryGetActiveFolderPath.Invoke(null, args);
-            string directory = (string)args[0];
-
-            SlideTouchGesture newLogger = CreateInstance<SlideTouchGesture>();
-            AssetDatabase.CreateAsset(newLogger, AssetDatabase.GenerateUniqueAssetPath(directory + "/SlideTouceGesture.asset"));
-            Selection.activeObject = newLogger;
-            AssetDatabase.SaveAssets();
-        }
-#endif
     }
 }

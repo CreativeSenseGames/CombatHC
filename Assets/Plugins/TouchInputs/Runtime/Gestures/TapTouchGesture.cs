@@ -247,21 +247,5 @@ namespace VirtualIT.TouchInputs
             }
             return true;
         }
-
-#if UNITY_EDITOR
-        [MenuItem("Virtual-IT/TouchInputs/Create Tap gesture...", priority = 0)]
-        internal static void CreateScriptableObject()
-        {
-            var _tryGetActiveFolderPath = typeof(ProjectWindowUtil).GetMethod("TryGetActiveFolderPath", BindingFlags.Static | BindingFlags.NonPublic);
-            object[] args = new object[] { null };
-            bool found = (bool)_tryGetActiveFolderPath.Invoke(null, args);
-            string directory = (string)args[0];
-
-            TapTouchGesture newLogger = CreateInstance<TapTouchGesture>();
-            AssetDatabase.CreateAsset(newLogger, AssetDatabase.GenerateUniqueAssetPath(directory + "/TapTouchGesture.asset"));
-            Selection.activeObject = newLogger;
-            AssetDatabase.SaveAssets();
-        }
-#endif
     }
 }

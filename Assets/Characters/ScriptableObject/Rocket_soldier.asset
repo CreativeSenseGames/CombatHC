@@ -1,0 +1,28 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e34e13bd112c40040b363f7dafe18596, type: 3}
+  m_Name: Rocket_soldier
+  m_EditorClassIdentifier: 
+  characterClass: 2
+  prefabCharacter: {fileID: 1655171663693685694, guid: eafeecf6030ad8e428f11c63daab6c93,
+    type: 3}
+  characterHealthStart: 100
+  characterHealthPerLevel: 10
+  hasAbility: 1
+  chAbilityCoolDown: 5
+  chAbilityRange: 15
+  chAbilityRadius: 6
+  chAbilityStrength: 20
+  prefabAbility: {fileID: 8258002606282854241, guid: feaf0435b36841548b3769fcb69a6e54,
+    type: 3}
+  canHaveWeapon: 1
+  startingWeapon: {fileID: 11400000, guid: f0ec08b7bfb00434cba50eefece57080, type: 2}

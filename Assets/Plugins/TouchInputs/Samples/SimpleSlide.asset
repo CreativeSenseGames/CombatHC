@@ -13,9 +13,10 @@ MonoBehaviour:
   m_Name: SimpleSlide
   m_EditorClassIdentifier: 
   MaxDuration: 99999
-  MinDuration: 0.2
+  MinDuration: 0
   TouchRestriction: 2
-  MinMouvementDistance: 5
+  EnableSimulation: 1
+  MinMouvementDistance: 0
   OnGestureStarted:
     m_PersistentCalls:
       m_Calls: []

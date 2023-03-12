@@ -34,11 +34,8 @@ namespace VirtualIT.TouchInputs
 
         private void Awake()
         {
-            DontDestroyOnLoad(this);
             EnhancedTouchSupport.Enable();
             SetupTouchGestureSimulation();
-
-            //SetTouchVisualisation(true, drawColor: Color.green, circleSize: 200);
         }
         private void Update()
         {
