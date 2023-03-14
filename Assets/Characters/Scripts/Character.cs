@@ -49,6 +49,17 @@ public abstract class Character : MonoBehaviour
             ChangeWeapon(settingsCharacter.startingWeapon);
             
         }
+
+        //Do any special initialization of class
+        InitSpecificityClass();
+    }
+
+    /// <summary>
+    /// This method does initialization of the specificity of class.
+    /// </summary>
+    public virtual void InitSpecificityClass()
+    {
+
     }
 
     public void Update()

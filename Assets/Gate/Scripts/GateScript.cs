@@ -30,8 +30,8 @@ public class GateScript : MonoBehaviour
     [Tooltip("A positive value will be a positive effect, for CHANGE_NUMBER : an add of character and for COOLDOWN_REDUCTION a cooldown reduce")]
     public int valueEffect;
 
-    public Vector3 p1Gate;
-    public Vector3 p2Gate;
+    Vector3 p1Gate;
+    Vector3 p2Gate;
 
     void Start()
     {

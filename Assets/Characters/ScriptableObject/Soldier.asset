@@ -19,6 +19,9 @@ MonoBehaviour:
   characterHealthPerLevel: 10
   hasAbility: 0
   chAbilityCoolDown: 0
+  chAbilityRange: 0
   chAbilityRadius: 0
+  chAbilityStrength: 0
+  prefabAbility: {fileID: 0}
   canHaveWeapon: 1
   startingWeapon: {fileID: 11400000, guid: f0ec08b7bfb00434cba50eefece57080, type: 2}

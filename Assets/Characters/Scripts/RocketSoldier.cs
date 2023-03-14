@@ -7,6 +7,16 @@ using UnityEngine;
 /// </summary>
 public class RocketSoldier : Character
 {
+    public Weapon rocketLauncher;
+
+    /// <summary>
+    /// Special initialization of rocket launcher, gets the rocket launcher information.
+    /// </summary>
+    public override void InitSpecificityClass()
+    {
+        rocketLauncher = this.GetComponent<Weapon>();
+    }
+
     /// <summary>
     /// This method override the one of Character and makes the rocket soldier to shoot a rocket
     /// that will deal damage to every enemy in a radius of the explosion.
@@ -18,6 +28,17 @@ public class RocketSoldier : Character
 
         if (closestEnnemyInRangeWithAOE.Count>0)
         {
+            //Instantiate the effect prefab for the rocket launcher shoot
+            GameObject newEffectShootRocketLauncher = GameObject.Instantiate(rocketLauncher.effectShoot, rocketLauncher.shootEffectParent);
+
+            //Set the position and rotatin at 0, same as the transform parent.
+            newEffectShootRocketLauncher.transform.localPosition = Vector3.zero;
+            newEffectShootRocketLauncher.transform.localEulerAngles = Vector3.zero;
+
+            //Force the object to destroy after 0.5s.
+            Destroy(newEffectShootRocketLauncher, 0.5f);
+
+
 
             //Create a sphere effect on the enemy target to show the explosion.
             GameObject ability = GameObject.Instantiate(settingsCharacter.prefabAbility);
