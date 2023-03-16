@@ -372,7 +372,7 @@ public class EntityPathfinder : MonoBehaviour
                     if (posXCurrent - startXCurrent > radius && endXCurrent - posXCurrent > radius)
                     {
                         float positionX = Mathf.Clamp(posXTarget, linePartAfter.startX + radius, linePartAfter.endX - radius);
-                        if (positionX >= linePartBefore.startX + radius && positionX <= linePartBefore.endX - radius)
+                        if (linePartBefore.startX + radius <= linePartBefore.endX - radius)
                         {
 
                             float distance = Vector3.SqrMagnitude(new Vector3(positionX - posXTarget, 0, lineAfter.posZ - posZTarget));
@@ -411,7 +411,7 @@ public class EntityPathfinder : MonoBehaviour
                     {
                         float positionX = Mathf.Clamp(posXTarget, linePartBefore.startX + radius, linePartBefore.endX - radius);
 
-                        if(positionX>= linePartBefore.startX + radius && positionX<= linePartBefore.endX - radius)
+                        if(linePartBefore.startX + radius <= linePartBefore.endX - radius)
                         {
                             float distance = Vector3.SqrMagnitude(new Vector3(positionX - posXTarget, 0, lineBefore.posZ - posZTarget));
                             if (distance < minimumPosition)

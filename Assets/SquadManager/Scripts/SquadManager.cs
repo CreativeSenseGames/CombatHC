@@ -33,6 +33,7 @@ public class SquadManager : MonoBehaviour
 
     Vector3 prevPosition;
 
+    WeaponScriptableObject currentWeapon = null;
     float rangeWeapon = 10f;
 
     void Start()
@@ -214,6 +215,9 @@ public class SquadManager : MonoBehaviour
 
             charactersOfEachType[listCharacterId].Add(newCharacter);
         }
+
+        //If there is a weapon that has been collected by the squad, equip it to new characters.
+        if(currentWeapon!=null)ChangeWeapon(currentWeapon);
 
         //If true, update the squad raidus and the position of the characters.
         if (updateSquad)
@@ -462,6 +466,7 @@ public class SquadManager : MonoBehaviour
             }
         }
         rangeWeapon = newWeapon.fireRange;
+        currentWeapon = newWeapon;
     }
 
     /// <summary>

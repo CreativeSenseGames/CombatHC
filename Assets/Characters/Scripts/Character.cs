@@ -158,7 +158,7 @@ public abstract class Character : Entity
     public void ChangeWeapon(WeaponScriptableObject weaponNew)
     {
         //If this character cant have weapon, do nothing.
-        if(canHaveWeapon)
+        if(canHaveWeapon && weapon != weaponNew)
         {
             //Destroy the previous 3D model of weapon.
             if (currentWeaponScript != null)
