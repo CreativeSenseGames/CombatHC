@@ -28,14 +28,17 @@ public class WeaponCollectable : MonoBehaviour
         timeRotation += speedRotation * Time.deltaTime;
         weaponPrefabContainer.transform.eulerAngles = timeRotation * Vector3.up;
 
-
-        float distanceMinToGetWeapon = SquadManager.instance.GetRadiusSquad();
-
-        if(new Vector2(this.transform.position.x - SquadManager.instance.transform.position.x, this.transform.position.z - SquadManager.instance.transform.position.z).sqrMagnitude < 0.5f * distanceMinToGetWeapon* distanceMinToGetWeapon)
+        foreach(SquadManager squad in EntityManager.instance.GetListAllSquads())
         {
-            SquadManager.instance.ChangeWeapon(weaponToCollect);
-            Destroy(this.gameObject);
+            float distanceMinToGetWeapon = squad.GetRadiusSquad();
+
+            if (new Vector2(this.transform.position.x - squad.transform.position.x, this.transform.position.z - squad.transform.position.z).sqrMagnitude < 0.5f * distanceMinToGetWeapon * distanceMinToGetWeapon)
+            {
+                squad.ChangeWeapon(weaponToCollect);
+                Destroy(this.gameObject);
+            }
         }
+        
 
     }
 }

@@ -10,7 +10,7 @@ public class Medic : Character
     public override bool DoAbility()
     {
         //Get All the characters in the ability radius
-        List<Character> charactersInRange = SquadManager.instance.GetCharacterAround(this.transform.position, settingsCharacter.chAbilityRadius);
+        List<Character> charactersInRange = squad.GetCharacterAround(this.transform.position, settingsCharacter.chAbilityRadius);
 
         //Create a sphere effect on the medic to show the healing ability.
         GameObject ability = GameObject.Instantiate(settingsCharacter.prefabAbility, this.transform);

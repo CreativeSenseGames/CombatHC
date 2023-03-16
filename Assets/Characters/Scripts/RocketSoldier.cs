@@ -24,7 +24,7 @@ public class RocketSoldier : Character
     public override bool DoAbility()
     {
         //Get the closest enemy and all enemy aroiunt it in the radius of the ability.
-        List<Enemy> closestEnnemyInRangeWithAOE = EnemyManager.instance.FindClosestEnemiesyInRangeWithAOE(this.transform.position, settingsCharacter.chAbilityRange, settingsCharacter.chAbilityRadius);
+        List<Entity> closestEnnemyInRangeWithAOE = EntityManager.instance.FindClosestEnemiesInRangeWithAOE(this.transform.position, settingsCharacter.chAbilityRange, settingsCharacter.chAbilityRadius, squad);
 
         if (closestEnnemyInRangeWithAOE.Count>0)
         {
@@ -48,9 +48,9 @@ public class RocketSoldier : Character
             Destroy(ability, 1f);
 
             //Deal damage to all the enemy in range of the explosion.
-            foreach(Enemy enemy in closestEnnemyInRangeWithAOE)
+            foreach(Entity entity in closestEnnemyInRangeWithAOE)
             {
-                enemy.TakeDamage(settingsCharacter.chAbilityStrength);
+                entity.TakeDamage(settingsCharacter.chAbilityStrength);
             }
 
             return true;

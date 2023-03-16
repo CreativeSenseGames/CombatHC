@@ -5,10 +5,12 @@ using UnityEngine;
 /// <summary>
 /// Parent class of the different character class.
 /// </summary>
-public abstract class Character : MonoBehaviour
+public abstract class Character : Entity
 {
     //The settings of this character class
     public ScriptableObjectClass settingsCharacter;
+
+    public SquadManager squad;
 
     //The health point of the character
     float health;
@@ -65,7 +67,7 @@ public abstract class Character : MonoBehaviour
     public void Update()
     {
         //If the game is over, don't do anything
-        if (SquadManager.instance.IsGameOver()) return;
+        if (GameManager.instance.IsGameOver()) return;
 
         //If this character has an ability
         if(hasAbility)
@@ -130,7 +132,7 @@ public abstract class Character : MonoBehaviour
     /// </summary>
     public bool DoAttack()
     {
-        Enemy closestEnnemyInRange = EnemyManager.instance.FindClosestEnemyInRange(this.transform.position, weapon.fireRange);
+        Entity closestEnnemyInRange = EntityManager.instance.FindClosestEnemyInRange(this.transform.position, weapon.fireRange, squad);
 
         if(closestEnnemyInRange!=null)
         {
@@ -199,12 +201,12 @@ public abstract class Character : MonoBehaviour
     /// Deal damage to the character and cause the death of it if needed.
     /// </summary>
 
-    public void TakeDamage(float damageValue)
+    public override void TakeDamage(float damageValue)
     {
         this.health -= damageValue;
         if (health <= 0)
         {
-            SquadManager.instance.RemoveCharacterFromSquad(this);
+            squad.RemoveCharacterFromSquad(this);
         }
     }
 }

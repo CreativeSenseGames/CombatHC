@@ -10,8 +10,8 @@ using static SquadSettingsScriptableObject;
 /// </summary>
 public class SquadManager : MonoBehaviour
 {
-    //Making the Suad manager to be accessible from everywhere
-    public static SquadManager instance;
+    public bool isPlayer = true;
+    //Making the Squad manager to be accessible from everywhere
 
     public List<ScriptableObjectClass> listClassCharacters;
     List<float> abilityCooldownModifier = new List<float>();
@@ -19,34 +19,34 @@ public class SquadManager : MonoBehaviour
     public SquadSettingsScriptableObject squadSettings;
 
     public SquadManagerControl squadManagerControl;
-    public UIManager uiManager;
 
 
-    List<List<Character>> charactersOfEachType;
+
+    public List<List<Character>> charactersOfEachType;
 
     float radius;
     public int nbCharacters = 0;
 
     public Transform characterParent;
 
-    public float timeGame;
-
-    bool isOver = false;
-    int nbCoin = 0;
+    bool hasBeenInit = false;
 
     Vector3 prevPosition;
-    void Awake()
+
+    float rangeWeapon = 10f;
+
+    void Start()
     {
-        instance = this;
-        timeGame = 0f;
-        InitSquad();
+        if(!hasBeenInit) InitSquad();
     }
 
     /// <summary>
     /// Initialize the squad with the starting composition holds in the settings scriptable object.
     /// </summary>
-    private void InitSquad()
+    public void InitSquad()
     {
+        prevPosition = this.transform.position;
+
         //define the starting radius.
         radius = squadSettings.sizeSquad0Unit;
 
@@ -72,37 +72,31 @@ public class SquadManager : MonoBehaviour
 
         //Update the radius and the position of each character.
         UpdateSquadRadiusAndOrder();
+
+        hasBeenInit = true;
     }
 
 
     void LateUpdate()
     {
-        if (isOver) return;
+        if (GameManager.instance.IsGameOver()) return;
 
         //Rotate on itself the squad.
         characterParent.Rotate(squadSettings.rotationSpeed * Time.deltaTime * Vector3.up);
 
-        //Save the previous position, used to check if the squad crossed a gate.
-        prevPosition = this.transform.position;
-
-        //Move the Squad with the control of joystick.
-        DoMovementSquad();
-
-        //Update the timer.
-        timeGame += Time.deltaTime;
-        uiManager.UpdateTime(timeGame);
         
-        //Check the game over conditions.
-        if (timeGame > squadSettings.timeToSurviveToWin)
+
+        if (isPlayer)
         {
-            uiManager.ShowWin();
-            isOver = true;
+            //Save the previous position, used to check if the squad crossed a gate.
+            prevPosition = this.transform.position;
+
+            //Move the Squad with the control of joystick.
+            DoMovementSquad();
+
+            
         }
-        else if (nbCharacters <= 0)
-        {
-            isOver = true;
-            uiManager.ShowLose();
-        }
+           
 
     }
 
@@ -119,12 +113,19 @@ public class SquadManager : MonoBehaviour
         this.transform.position += magnitudeMove * new Vector3(directionMove.x, 0f, directionMove.y);
 
 
+        CheckPositionSquad(directionMove);
+    }
+    /// <summary>
+    /// Move the squad to not be in collision with any obstacle.
+    /// </summary>
+    public void CheckPositionSquad(Vector2 directionMove)
+    {
         //Check all around the squad by ray casting in lot of directions to check if an obstacle is too close.
         int layerMask = 1 << 6;
 
         //In case no movement, we check all around the squad and not only in front of it.
         float angleMaxToCheck = 135f;
-        if(directionMove.sqrMagnitude<0.01f)
+        if (directionMove.sqrMagnitude < 0.01f)
         {
             angleMaxToCheck = 180f;
             directionMove.x = 1f;
@@ -137,15 +138,15 @@ public class SquadManager : MonoBehaviour
         {
             Vector3 direction = Quaternion.Euler(angleToCheckAround * Vector3.up) * new Vector3(directionMove.x, 0, directionMove.y);
 
-           RaycastHit hit;
+            RaycastHit hit;
             if (Physics.Raycast(transform.position, direction, out hit, (this.radius + squadSettings.extraRadiusForObstacle), layerMask))
             {
                 //If a ray touches, it means that the squad is too close from this obstacle, so we move the squad away from it.
                 this.transform.position += (hit.distance - (this.radius + squadSettings.extraRadiusForObstacle)) * direction;
- 
+
             }
             angleToCheckAround *= -1;
-            if (angleToCheckAround<=0)
+            if (angleToCheckAround <= 0)
             {
                 angleToCheckAround -= stepAngle;
             }
@@ -205,6 +206,7 @@ public class SquadManager : MonoBehaviour
             GameObject newCharacterGO = GameObject.Instantiate(listClassCharacters[listCharacterId].prefabCharacter, characterParent);
             //we add the right script to it depending of the class.
             Character newCharacter = FactoryCharacter.AddComponentCharacter(newCharacterGO, listClassCharacters[listCharacterId].characterClass);
+            newCharacter.squad = this;
             newCharacter.settingsCharacter = listClassCharacters[listCharacterId];
             newCharacter.Init();
             //We set the right cooldown modifier for this class.
@@ -413,7 +415,18 @@ public class SquadManager : MonoBehaviour
     public void DoDamageSquad(Vector3 positionAttacker, float damageValue)
     {
         //Find the closest character
-        Character closestCharacter = null;
+        Entity closestCharacter = GetCharacterCloserFromAttackerPosition(positionAttacker);
+
+        //Do damage to the closest character.
+        if (closestCharacter!=null)
+        {
+            closestCharacter.TakeDamage(damageValue);
+        }
+    }
+
+    public Entity GetCharacterCloserFromAttackerPosition(Vector3 positionAttacker)
+    {
+        Entity closestCharacter = null;
         float closestDistance = Mathf.Infinity;
         for (int i = 0; i < charactersOfEachType.Count; i++)
         {
@@ -421,28 +434,16 @@ public class SquadManager : MonoBehaviour
             {
                 Character character = charactersOfEachType[i][j];
                 float distance = new Vector2(positionAttacker.x - character.transform.position.x, positionAttacker.z - character.transform.position.z).sqrMagnitude;
-                if (distance <= closestDistance* closestDistance)
+                if (distance <= closestDistance * closestDistance)
                 {
                     closestDistance = distance;
                     closestCharacter = character;
                 }
             }
         }
-
-        //Do damage to the closest character.
-        if(closestCharacter!=null)
-        {
-            closestCharacter.TakeDamage(damageValue);
-        }
+        return closestCharacter;
     }
-
-    /// <summary>
-    /// Return if the game is over.
-    /// </summary>
-    public bool IsGameOver()
-    {
-        return isOver;
-    }
+    
 
     /// <summary>
     /// Called by a weaponCollectable, this method changes the weapon of each character holding a weapon.
@@ -460,6 +461,7 @@ public class SquadManager : MonoBehaviour
                 character.ChangeWeapon(newWeapon);
             }
         }
+        rangeWeapon = newWeapon.fireRange;
     }
 
     /// <summary>
@@ -467,8 +469,10 @@ public class SquadManager : MonoBehaviour
     /// </summary>
     public void AddCoin(int nbCoinToAdd)
     {
-        nbCoin += nbCoinToAdd;
-        uiManager.UpdateCoin(nbCoin);
+        if(isPlayer)
+        {
+            GameManager.instance.AddCoin(nbCoinToAdd);
+        }
     }
 
     /// <summary>
@@ -477,5 +481,21 @@ public class SquadManager : MonoBehaviour
     public Vector3 GetPrevPosition()
     {
         return prevPosition;
+    }
+
+    /// <summary>
+    /// Set the previous position of the squad to check gate going through.
+    /// </summary>
+    public void SetPrevPosition(Vector3 setPrevPosition)
+    {
+        prevPosition= setPrevPosition;
+    }
+
+    /// <summary>
+    /// Return the range of the current weapon.
+    /// </summary>
+    public float GetRangeWeapon()
+    {
+        return rangeWeapon;
     }
 }

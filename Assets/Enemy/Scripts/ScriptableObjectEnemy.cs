@@ -12,6 +12,9 @@ public class ScriptableObjectEnemy : ScriptableObject
     public float enemyTurnSpeed;
     public float enemyAtkDamage;
     public float enemyAtkRange;
+    public float enemyRadius;
+    [Tooltip("The number of attack every second.")]
+    public float attackSpeed;
 
     public int currencyLeftBehind;
     public GameObject prefabCoin;

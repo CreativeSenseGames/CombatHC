@@ -30,8 +30,8 @@ public class GateScript : MonoBehaviour
     [Tooltip("A positive value will be a positive effect, for CHANGE_NUMBER : an add of character and for COOLDOWN_REDUCTION a cooldown reduce")]
     public int valueEffect;
 
-    Vector3 p1Gate;
-    Vector3 p2Gate;
+    public Vector3 p1Gate;
+    public Vector3 p2Gate;
 
     void Start()
     {
@@ -42,13 +42,17 @@ public class GateScript : MonoBehaviour
 
     void Update()
     {
-        //Check if the squad crossed the gate.
-        if(CheckIfCrossed(SquadManager.instance.GetPrevPosition(), SquadManager.instance.transform.position))
+        foreach (SquadManager squad in EntityManager.instance.GetListAllSquads())
         {
-            //Do the effect of the gate.
-            DoEffect();
-            //Destry the gate and avoid that the effect is made more than 1 time.
-            Destroy(this.gameObject);
+            
+            //Check if the squad crossed the gate.
+            if (CheckIfCrossed(squad.GetPrevPosition(), squad.transform.position))
+            {
+                //Do the effect of the gate.
+                DoEffect(squad);
+                //Destry the gate and avoid that the effect is made more than 1 time.
+                Destroy(this.gameObject);
+            }
         }
        
     }
@@ -56,15 +60,15 @@ public class GateScript : MonoBehaviour
     /// <summary>
     /// Using the settings of the gate, do the effect associated.
     /// </summary>
-    public void DoEffect()
+    public void DoEffect(SquadManager squad)
     {
         if(effectType==EffectTypeGate.CHANGE_NUMBER)
         {
-            SquadManager.instance.AddCharacterGate(characterClassEffect, valueEffect);
+            squad.AddCharacterGate(characterClassEffect, valueEffect);
         }
         else if (effectType == EffectTypeGate.COOLDOWN_REDUCTION)
         {
-            SquadManager.instance.ChangeCooldownModifier(characterClassEffect, valueEffect);
+            squad.ChangeCooldownModifier(characterClassEffect, valueEffect);
         }
     }
 
@@ -73,14 +77,14 @@ public class GateScript : MonoBehaviour
     /// </summary>
     public bool CheckIfCrossed(Vector3 prevPosition, Vector3 positionNow)
     {
-        
+        if (prevPosition == positionNow) return false;
 
         float s1_x, s1_y, s2_x, s2_y;
         s1_x = p2Gate.x - p1Gate.x; 
         s1_y = p2Gate.z - p1Gate.z;
 
         s2_x = positionNow.x - prevPosition.x; 
-        s2_y = positionNow.y - prevPosition.z;
+        s2_y = positionNow.z - prevPosition.z;
 
         float s, t;
         s = (-s1_y * (p1Gate.x - prevPosition.x) + s1_x * (p1Gate.z - prevPosition.z)) / (-s2_x * s1_y + s1_x * s2_y);

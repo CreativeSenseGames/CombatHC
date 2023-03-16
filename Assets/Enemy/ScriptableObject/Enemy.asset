@@ -19,6 +19,8 @@ MonoBehaviour:
   enemyTurnSpeed: 360
   enemyAtkDamage: 10
   enemyAtkRange: 1
+  enemyRadius: 0
+  attackSpeed: 0.5
   currencyLeftBehind: 1
   prefabCoin: {fileID: 6576179856071586971, guid: aba10e480f85e434f96d443733189435,
     type: 3}

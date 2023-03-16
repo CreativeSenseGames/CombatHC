@@ -38,7 +38,7 @@ public class EnnemySpawner : MonoBehaviour
     void Update()
     {
         //If the game is over, don't do anything
-        if (SquadManager.instance.IsGameOver()) return;
+        if (GameManager.instance.IsGameOver()) return;
 
         //Foreach spawning settings, check if an enemy should be spawn.
         foreach (EnnemySettingsSpawn settingSpawn in settingsSpawn)
@@ -58,8 +58,8 @@ public class EnnemySpawner : MonoBehaviour
     /// </summary>
     public void SpawnEnnemy(ScriptableObjectEnemy ennemyToSpawn, float radiusMaxSpawn)
     {
-        GameObject ennemyGO = GameObject.Instantiate(ennemyToSpawn.prefabEnnemy, EnemyManager.instance.enemyContainer);
-        Enemy ennemy = ennemyGO.AddComponent<Enemy>();
+        GameObject ennemyGO = GameObject.Instantiate(ennemyToSpawn.prefabEnnemy, EntityManager.instance.enemyContainer);
+        Enemy enemy = ennemyGO.AddComponent<Enemy>();
 
         float randomAngle = UnityEngine.Random.Range(0, Mathf.PI * 2);
         float randomDistance = UnityEngine.Random.Range(0, radiusMaxSpawn);
@@ -70,10 +70,10 @@ public class EnnemySpawner : MonoBehaviour
         ennemyGO.transform.eulerAngles = new Vector3(0, UnityEngine.Random.Range(0, 360f), 0f);
 
         //Initialize the enemy.
-        ennemy.settingsEnemy = ennemyToSpawn;
-        ennemy.Init();
+        enemy.settingsEnemy = ennemyToSpawn;
+        enemy.Init();
 
         //Add the enemy to the list of EnemyManager.
-        EnemyManager.instance.listAllEnemies.Add(ennemy);
+        EntityManager.instance.AddEnemy(enemy);
     }
 }

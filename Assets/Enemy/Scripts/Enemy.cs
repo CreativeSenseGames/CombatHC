@@ -2,15 +2,16 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Enemy : MonoBehaviour
+public class Enemy : Entity
 {
     [Tooltip("The scriptable settings of this enemy")]
     public ScriptableObjectEnemy settingsEnemy;
     float health;
-
     //This value is used for the pathfinder, to have some variation in the position of the ennemy 
     //and avoid that all enemies are on the same point.
     float randomValue;
+
+    public float timeAttack = 0;
 
     /// <summary>
     /// Initialize the Enemy
@@ -20,18 +21,18 @@ public class Enemy : MonoBehaviour
         health = settingsEnemy.enemyHealth;
 
         randomValue = Random.Range(-1f, 1f);
-
+        timeAttack = 0f;
     }
 
     /// <summary>
     /// Decrease the health point of the damage dealt, if the health point reaches 0, calls the Death.
     /// </summary>
-    public void TakeDamage(float damage)
+    public override void TakeDamage(float damageValue)
     {
-        health -= damage;
+        health -= damageValue;
         if(health<=0)
         {
-            EnemyManager.instance.listAllEnemies.Remove(this);
+            EntityManager.instance.RemoveEnemy(this);
             this.transform.SetParent(null);
             Death();
         }
@@ -44,8 +45,8 @@ public class Enemy : MonoBehaviour
     {
         for(int i=0; i<settingsEnemy.currencyLeftBehind; i++)
         {
-            GameObject coin = GameObject.Instantiate(settingsEnemy.prefabCoin, EnemyManager.instance.coinContainer);
-            EnemyManager.instance.listAllCoins.Add(coin);
+            GameObject coin = GameObject.Instantiate(settingsEnemy.prefabCoin, EntityManager.instance.coinContainer);
+            EntityManager.instance.AddCoin(coin);
             coin.transform.position = new Vector3(this.transform.position.x+Random.Range(-settingsEnemy.spawnCoinRadius, settingsEnemy.spawnCoinRadius), coin.transform.position.y, this.transform.position.z+Random.Range(-settingsEnemy.spawnCoinRadius, settingsEnemy.spawnCoinRadius));
         }
         StartCoroutine(PlayDeathAnimation());
